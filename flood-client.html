@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <div>In flight request ids: <span id="inflight"></span></div>
+        <div>Total responses received: <span id="received"></span></div>
+        <script>
+         reqCount = 0;
+         receivedCount = 0;
+         inflightReqs = new Set();
+         const maxInflightRequests = 40;
+
+         function newRequest() {
+             const id = reqCount++;
+             inflightReqs.add(id);
+             return fetch(`${id}`)
+                 .then(res => res.json())
+                 .then(resId => {
+                   inflightReqs.delete(resId);
+                   receivedCount++;
+                 });
+         }
+
+         requestAnimationFrame(function renderStats() {
+             document.querySelector("#inflight").innerText = [...inflightReqs].toString();
+             document.querySelector("#received").innerText = receivedCount;
+             requestAnimationFrame(renderStats);
+         })
+
+
+         setInterval(() => {
+             while(inflightReqs.size < maxInflightRequests) newRequest();
+         }, 0);
+
+        </script>
+    </body>
+</html>
