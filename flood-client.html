@@ -28,7 +28,6 @@
              requestAnimationFrame(renderStats);
          })
 
-
          setInterval(() => {
              while(inflightReqs.size < maxInflightRequests) newRequest();
          }, 0);
